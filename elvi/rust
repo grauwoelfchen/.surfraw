@@ -1,0 +1,88 @@
+#!/bin/sh
+# elvis: rust            -- Open Rust related offline documents
+# yasuhiro.asaka@grauwoelfchen.net 20220211
+
+. surfraw || exit 1
+
+w3_config_hook() {
+  def SURFRAW_rust_document_type "std"
+  def SURFRAW_rust_toolchain "stable-x86_64-unknown-linux-gnu"
+}
+
+w3_usage_hook() {
+  cat <<EOF
+Usage: $ws_argv0 [options] [search words]...
+Description:
+  Search the Rust documentation
+Local options:
+  -document-type=DOCUMENT_TYPE  Documentation type
+                                Default: std
+                                Environment: SURFRAW_rust_document_type
+  -dt=DOCUMENT_TYPE             Type of document:
+                                Default: std
+                                Environment: SURFRAW_rust_document_type
+     ex,exp          |          Rust By Example
+     re,ref          |          Reference
+     std             |          The Rust Stantdard Library
+  -toolchain=TOOLCHAIN          Rust toolchain
+                                Default: stable-x86_64-unknown-linux-gnu
+                                Environment: SURFRAW_rust_toolchain
+  -t=TOOLCHAIN                  Check installed toolchains with \`rustup toolchain list\`
+EOF
+  w3_global_usage
+}
+
+w3_complete_hook_opt() {
+  local opt="${1}"
+  case "${opt}" in
+    -dt=*|-document-type=*)
+      echo ex exp re ref std
+      ;;
+    -t=*|-toolchain=*)
+      rustup toolchain list | awk '{ print $1 }' | xargs
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+w3_parse_option_hook() {
+  local opt="${1}"
+  local arg="${2}"
+
+  case "${opt}" in
+    -dt=*|-document-type=*)
+      setopt SURFRAW_rust_document_type $arg
+      ;;
+    -t=*|-toolchain=*)
+      setopt SURFRAW_rust_toolchain $arg
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+w3_config
+w3_parse_args "${@}"
+
+base_url="file://${HOME}/.rustup/toolchains/${SURFRAW_rust_toolchain}\
+/share/doc/rust/html"
+
+case "${SURFRAW_rust_document_type}" in
+  ex|exp)
+    path="rust-by-example/index.html"
+    ;;
+  re|ref)
+    path="reference/index.html"
+    ;;
+  std)
+    path="std/index.html"
+    ;;
+  *)
+    path="index.html"
+    ;;
+esac
+
+w3_browse_url "${base_url}/${path}"

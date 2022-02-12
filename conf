@@ -1,0 +1,2 @@
+SURFRAW_graphical_browser="surf -FIkn"
+SURFRAW_text_browser="elinks"

@@ -4,6 +4,13 @@ This is a repo of personal config files and scripts for [Surfraw](
 https://gitlab.com/surfraw/Surfraw).
 
 
+## Setup
+
+```zsh
+% cd ~/.config
+% git clone git@git.sr.ht:~grauwoelfchen/.surfraw .surfraw
+```
+
 ## Usage
 
 ```zsh

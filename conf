@@ -1,2 +1,2 @@
-SURFRAW_graphical_browser="surf -FIkn"
+SURFRAW_graphical_browser="surf -IknMND -C ~/.surf/styles/default.css"
 SURFRAW_text_browser="elinks"
